@@ -1,5 +1,5 @@
 #!/bin/bash
-NS=("nameserver 8.8.8.8"$'\n'"nameserver 4.2.2.4")
+NS=("nameserver 8.8.8.8"$'\n'"nameserver 4.2.2.4"$'\n'"nameserver 1.1.1.1")
 #clear page
 clear;
 sleep 1;
@@ -51,16 +51,17 @@ clear;
 sudo apt-get install -y apt-transport-https software-properties-common wget -y
 
 sudo mkdir -p /etc/apt/keyrings/
-wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
+sudo wget -q -O /etc/apt/keyrings/grafana.key https://apt.grafana.com/gpg.key
+#wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | sudo tee /etc/apt/keyrings/grafana.gpg > /dev/null
 #To add a repository for stable and beta releases
 echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com beta main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+#echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com beta main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 # Updates the list of available packages
 sudo apt-get update
 # Installs the latest OSS release:
 sudo apt-get install grafana -y
 # Installs the latest OSS release:
-sudo apt-get install grafana -y
+sudo apt-get install grafana-enterprise -y
 
 #start grafana
 sudo systemctl daemon-reload
