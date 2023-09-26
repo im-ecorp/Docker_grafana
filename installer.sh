@@ -153,7 +153,7 @@ sudo apt-get update && sudo apt-get install influxdb -y
 sudo service influxdb start
 
 
-influx -execute CREATE USER $USERName WITH PASSWORD '$USERPass' WITH ALL PRIVILEGES 
+echo "CREATE USER $USERName WITH PASSWORD '$USERPass' WITH ALL PRIVILEGES " | influx
 
 # Define the regular expression pattern to search for
 SEARCH_PATTERN="# auth-enabled = false"
@@ -166,7 +166,7 @@ sed -i "s/$SEARCH_PATTERN/$REPLACE_TEXT/" /etc/influxdb/influxdb.conf
 
 sudo systemctl restart influxdb
 
-influx -username '$USERName' -password '$USERPass' -execute CREATE DATABASE $DBName
+echo "CREATE DATABASE $DBName" | influx -username '$USERName' -password '$USERPass'
 
 
 ##########      end install influxDB      ############
