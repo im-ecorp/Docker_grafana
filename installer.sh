@@ -2,7 +2,7 @@
 
 DBName="iranserver"
 USERName="admin"
-USERPass="pass"
+USERPass="admin"
 NS=("nameserver 8.8.8.8"$'\n'"nameserver 4.2.2.4"$'\n'"nameserver 1.1.1.1")
 #clear page
 clear;
@@ -173,9 +173,82 @@ influx -username '$USERName' -password '$USERPass' -execute CREATE DATABASE $DBN
 
 ##########      install prometheus      ############
 
+sudo groupadd --system prometheus
+
+sudo useradd -s /sbin/nologin --system -g prometheus prometheus
+
+sudo mkdir /var/lib/prometheus
+sudo mkdir /etc/prometheus
+sudo apt update
+sudo apt -y install wget curl vim
+
+mkdir -p /tmp/prometheus && cd /tmp/prometheus
+curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -i -
+tar xvf prometheus*.tar.gz
+cd prometheus*/
+sudo mv prometheus promtool /usr/local/bin/
+
+clear;
+prometheus --version
+sleep 1;
+clear;
+promtool --version
+sleep 1;
+clear;
+
+sudo mv prometheus.yml /etc/prometheus/prometheus.yml
+sudo mv consoles/ console_libraries/ /etc/prometheus/
+
+cd
+
+text_to_append="  - job_name: 'telegraf'
+    static_configs:
+
+    - targets: [\"localhost:9273\"]"
+
+# Append the text to the file
+echo -e "$text_to_append" >> /etc/prometheus/prometheus.yml
+
+sudo tee /etc/systemd/system/prometheus.service<<EOF
+[Unit]
+Description=Prometheus
+Documentation=https://prometheus.io/docs/introduction/overview/
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+ExecReload=/bin/kill -HUP \$MAINPID
+ExecStart=/usr/local/bin/prometheus \
+  --config.file=/etc/prometheus/prometheus.yml \
+  --storage.tsdb.path=/var/lib/prometheus \
+  --web.console.templates=/etc/prometheus/consoles \
+  --web.console.libraries=/etc/prometheus/console_libraries \
+  --web.listen-address=0.0.0.0:9090 \
+  --web.external-url=
+
+SyslogIdentifier=prometheus
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo chown prometheus:prometheus /usr/local/bin/prometheus 
+sudo chown prometheus:prometheus /usr/local/bin/promtool 
+
+sudo chown prometheus:prometheus /etc/prometheus 
+sudo chown -R prometheus:prometheus /etc/prometheus/consoles 
+sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries 
+sudo chown -R prometheus:prometheus /var/lib/prometheus 
 
 
 
+sudo systemctl daemon-reload
+sudo systemctl start prometheus
+sudo systemctl enable prometheus
 
 
 ##########      end install prometheus      ############
