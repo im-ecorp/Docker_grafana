@@ -1,4 +1,8 @@
 #!/bin/bash
+
+DBName="iranserver"
+USERName="admin"
+USERPass="pass"
 NS=("nameserver 8.8.8.8"$'\n'"nameserver 4.2.2.4"$'\n'"nameserver 1.1.1.1")
 #clear page
 clear;
@@ -110,9 +114,9 @@ sudo tee /etc/telegraf/telegraf.conf<<EOF
   omit_hostname = false
 [[outputs.influxdb]]
  urls = ["http://localhost:8086"]
- database = "part_db"
- username = "admin"
- password = "admin"
+ database = "$DBName"
+ username = "$USERName"
+ password = "$USERPass"
 
 [[outputs.prometheus_client]]
   metric_version = 2
@@ -149,7 +153,7 @@ sudo apt-get update && sudo apt-get install influxdb -y
 sudo service influxdb start
 
 
-influx -execute CREATE USER admin WITH PASSWORD 'admin' WITH ALL PRIVILEGES 
+influx -execute CREATE USER $USERName WITH PASSWORD '$USERPass' WITH ALL PRIVILEGES 
 
 # Define the regular expression pattern to search for
 SEARCH_PATTERN="# auth-enabled = false"
@@ -162,7 +166,7 @@ sed -i "s/$SEARCH_PATTERN/$REPLACE_TEXT/" /etc/influxdb/influxdb.conf
 
 sudo systemctl restart influxdb
 
-influx -username 'admin' -password 'admin' -execute CREATE DATABASE part_db 
+influx -username '$USERName' -password '$USERPass' -execute CREATE DATABASE $DBName
 
 
 ##########      end install influxDB      ############
