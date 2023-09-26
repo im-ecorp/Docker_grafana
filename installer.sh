@@ -52,7 +52,7 @@ clear;
 
 
 #############################      install grafana          ################################################
-sudo apt-get install -y apt-transport-https software-properties-common wget -y
+sudo apt-get install -y apt-transport-https software-properties-common wget jq -y
 
 sudo mkdir -p /etc/apt/keyrings/
 sudo wget -q -O /etc/apt/keyrings/grafana.key https://apt.grafana.com/gpg.key
