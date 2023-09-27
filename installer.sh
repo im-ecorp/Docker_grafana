@@ -44,7 +44,7 @@ sudo systemctl enable grafana-server.service
 sudo systemctl restart grafana-server
 #init.d service start
 sudo service grafana-server start
-clear;
+
 #############################    End of install grafana      ################################################
 
 
@@ -58,7 +58,6 @@ echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c influxdat
 echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/debian stable main' | sudo tee /etc/apt/sources.list.d/influxdata.list
 
 sudo apt-get update && sudo apt-get install telegraf -y
-clear;
 
 mv /etc/telegraf/telegraf.conf /etc/telegraf/telegraf.conf-org
 
@@ -153,10 +152,8 @@ sudo mv prometheus promtool /usr/local/bin/
 clear;
 prometheus --version
 sleep 1;
-clear;
 promtool --version
 sleep 1;
-clear;
 
 sudo mv prometheus.yml /etc/prometheus/prometheus.yml
 sudo mv consoles/ console_libraries/ /etc/prometheus/
